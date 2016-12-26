@@ -20,11 +20,24 @@ class UserController {
             }
             next()
         }
-        
         router.get("/pendingActivation", handler: pendingActivation)
-        
+        router.get("/pendingActivation2", handler: pendingActivation2)
     }
     
+    func pendingActivation2(request: RouterRequest, response: RouterResponse, next: () -> Void) {
+        //do query here
+        let database = Database()
+        firstly {
+            database.queryUsers(with: Database.allUsersPendingActivation())
+            }.then { users in
+                print("Returned Users are \(users)")
+                
+        }
+    }
+    
+    //users is not used 
+    //this uses Swift Kuery but 
+    // irar We don’t support that. It will be a part of the ORM layer above Swift-Kuery. For now you need to convert the rows returned from the db into your class/struct.
     func users(_ callback:@escaping (String)->Void) -> Void {
         connection.connect() { error in
             if let error = error {
@@ -41,22 +54,22 @@ class UserController {
                         
                         var returnJSON = [String: Any]()
                         var returnJSONList = [[String: Any]]()
-
+                        
                         var retString = ""
                         /*
                          for title in resultSet.titles {
-                            
+                         
                          }
-                        */
-                         retString.append("\n")
+                         */
+                        retString.append("\n")
                         
                         for row in resultSet.rows {
                             /*for value in row {
-                                if let value = value as? String {
-                                    retString.append(value)
-                                     returnJSON["password"] = value
-                                }
-                            }*/
+                             if let value = value as? String {
+                             retString.append(value)
+                             returnJSON["password"] = value
+                             }
+                             }*/
                             var count = 0
                             for value in row {
                                 
@@ -150,15 +163,15 @@ class UserController {
             }
         }
         next()
-
+        
         /*
-        users() {
-            resp in
-            response.send(resp)
-            // next()
-        }
-        */
+         users() {
+         resp in
+         response.send(resp)
+         // next()
+         }
+         */
         
     }
-
+    
 }
